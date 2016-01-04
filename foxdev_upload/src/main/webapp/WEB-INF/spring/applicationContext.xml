@@ -3,6 +3,7 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:beans="http://www.springframework.org/schema/beans"
     xmlns:context="http://www.springframework.org/schema/context"
     xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+    	http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
  
@@ -34,6 +35,17 @@
     </beans:bean>
  
     <context:component-scan base-package="pe.com.foxdev" />
+    
+     <camelContext xmlns="http://camel.apache.org/schema/spring">
+        <route id="routeListeningHTTPAndRouting">
+            <from uri="file://target/upload/" />
+            <log message="Moving ${file:name} to the output directory" />
+            <to uri="bean:ExportacionHostController?method=exportacionHost2" />
+            <otherwise>
+                <to uri="file://target/unknown/" pattern="InOnly" />
+            </otherwise>
+        </route>
+    </camelContext>
  
 </beans:beans>
 
