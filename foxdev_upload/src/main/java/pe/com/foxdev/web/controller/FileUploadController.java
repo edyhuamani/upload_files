@@ -6,6 +6,8 @@ import java.io.FileOutputStream;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.annotation.MultipartConfig;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -19,8 +21,11 @@ import org.springframework.web.servlet.ModelAndView;
 import pe.com.foxdev.beans.MultipleFileUploadForm;
 
 @Controller
+@MultipartConfig(fileSizeThreshold = 20971520)
 public class FileUploadController {
-
+	
+	private static final Logger logger=Logger
+	
 	@RequestMapping(value="/redirect.htm",method={RequestMethod.GET})
 	public ModelAndView uploadRedirect(){
 		ModelAndView model=new ModelAndView();
@@ -52,10 +57,11 @@ public class FileUploadController {
                     dir.mkdirs();
                 
                 File serverFile = new File(dir.getAbsolutePath() + File.separator + name);
-                
-                BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(serverFile));
-                stream.write(bytes);
-                stream.close();
+                file.transferTo(serverFile);
+                log.info("Server File Location=" + serverFile.getAbsolutePath());
+                //BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(serverFile));
+                //stream.write(bytes);
+                //stream.close();
 				
 			}
 			
@@ -86,9 +92,11 @@ public class FileUploadController {
                     dir.mkdirs();
 				
 				File serverFile = new File(dir.getAbsolutePath() + File.separator + nameFile);
-				BufferedOutputStream stream = new BufferedOutputStream( new FileOutputStream(serverFile));
-				stream.write(bytes);
-	            stream.close();
+				file.transferTo(serverFile);
+				
+//				BufferedOutputStream stream = new BufferedOutputStream( new FileOutputStream(serverFile));
+//				stream.write(bytes);
+//	            stream.close();
 			}
 		}catch(Exception e){
 			
