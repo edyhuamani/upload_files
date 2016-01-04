@@ -8,6 +8,8 @@ import java.util.Map;
 
 import javax.servlet.annotation.MultipartConfig;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -24,7 +26,7 @@ import pe.com.foxdev.beans.MultipleFileUploadForm;
 @MultipartConfig(fileSizeThreshold = 20971520)
 public class FileUploadController {
 	
-	private static final Logger logger=Logger
+	private static final Logger logger=LoggerFactory.getLogger(FileUploadController.class);
 	
 	@RequestMapping(value="/redirect.htm",method={RequestMethod.GET})
 	public ModelAndView uploadRedirect(){
@@ -50,6 +52,7 @@ public class FileUploadController {
 				 
 				String rootPath = System.getProperty("catalina.home");
 				System.out.println(rootPath);
+				String fileNameOriginal = file.getOriginalFilename();
 				
 				 // Creating the directory to store file
 				File dir = new File(rootPath + File.separator + "tmpFiles");
@@ -58,7 +61,7 @@ public class FileUploadController {
                 
                 File serverFile = new File(dir.getAbsolutePath() + File.separator + name);
                 file.transferTo(serverFile);
-                log.info("Server File Location=" + serverFile.getAbsolutePath());
+                logger.info("Server File Location=" + serverFile.getAbsolutePath());
                 //BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(serverFile));
                 //stream.write(bytes);
                 //stream.close();
@@ -84,6 +87,7 @@ public class FileUploadController {
 				
 				MultipartFile file=files[i];
 				byte[] bytes =file.getBytes();
+				String fileNameOriginal = file.getOriginalFilename();
 				String nameFile=names[i];
 				String rootPath = System.getProperty("catalina.home");
 				/**Se esta repitiendo no deberia repetirse por cada iteracion **/
